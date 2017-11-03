@@ -8,7 +8,6 @@ from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import pgettext_lazy
 from django_countries.fields import Country, CountryField
-from ..search import index
 
 
 class AddressManager(models.Manager):
@@ -108,7 +107,7 @@ class UserManager(BaseUserManager):
                                 is_superuser=True, **extra_fields)
 
 
-class User(PermissionsMixin, AbstractBaseUser, index.Indexed):
+class User(PermissionsMixin, AbstractBaseUser):
     email = models.EmailField(pgettext_lazy('User field', 'email'), unique=True)
     addresses = models.ManyToManyField(
         Address, blank=True,
@@ -134,9 +133,6 @@ class User(PermissionsMixin, AbstractBaseUser, index.Indexed):
     USERNAME_FIELD = 'email'
 
     objects = UserManager()
-
-    search_fields = [
-        index.SearchField('email')]
 
     class Meta:
         verbose_name = pgettext_lazy('User model', 'user')
