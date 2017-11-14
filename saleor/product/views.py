@@ -8,8 +8,8 @@ from django.http import HttpResponsePermanentRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 
-from .filters import (get_now_sorted_by, get_sort_by_choices,
-                      ProductFilter)
+from ..core.utils.filters import get_now_sorted_by, get_sort_by_choices
+from .filters import ProductFilter, SORT_BY_FIELDS
 from .models import Category
 from .utils import (products_with_details, products_for_cart,
                     handle_cart_form, get_availability,
@@ -128,7 +128,7 @@ def category_index(request, path, category_id):
         product_filter.qs, PAGINATE_BY, request.GET.get('page'))
     products_and_availability = list(products_with_availability(
         products_paginated, request.discounts, request.currency))
-    now_sorted_by = get_now_sorted_by(product_filter)
+    now_sorted_by = get_now_sorted_by(product_filter, SORT_BY_FIELDS)
     arg_sort_by = request.GET.get('sort_by')
     is_descending = arg_sort_by.startswith('-') if arg_sort_by else False
     ctx = {'category': category, 'filter': product_filter,
